@@ -10,8 +10,7 @@ if (isset($_GET['genre_id'])) {
             WHERE film_genre.FID_Genre = :genre_id";
     
     $stmt = $pdo->prepare($sql);
-    $stmt->bindValue(':genre_id', $genre_id, PDO::PARAM_INT);
-    $stmt->execute();
+    $stmt->execute([':genre_id' => $genre_id]); 
     
     $films = $stmt->fetchAll();
 ?>
