@@ -11,59 +11,21 @@ if (isset($_GET['actor_id'])) {
     
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':actor_id' => $actor_id]); 
-    
-    $films = $stmt->fetchAll();
-?>
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>Результат - За актором</title>
-    <style>
-        body 
-        { 
-            font-family: Arial, sans-serif; margin: 20px; 
-        }
-        table 
-        { 
-            border-collapse: collapse; width: 600px; margin-top: 15px; 
-        }
-        th, td 
-        { 
-            border: 1px solid black; padding: 8px; text-align: left; 
-        }
-        th 
-        { 
-            background-color: #f2f2f2; 
-        }
-    </style>
-</head>
-<body>
-    <h2>Фільми за участю обраного актора:</h2>
-    
-    <?php if ($films): ?>
-        <table>
-            <tr>
-                <th>Назва фільму</th>
-                <th>Дата виходу</th>
-                <th>Режисер</th>
-            </tr>
-            <?php foreach ($films as $film): ?>
-                <tr>
-                    <td><?= htmlspecialchars($film['name']) ?></td>
-                    <td><?= htmlspecialchars($film['date']) ?></td>
-                    <td><?= htmlspecialchars($film['director']) ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-    <?php else: ?>
-        <p>Фільмів з цим актором не знайдено.</p>
-    <?php endif; ?>
+    $films = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    <br>
-    <a href="index.php">Повернутися назад</a>
-</body>
-</html>
-<?php
+    header('Content-Type: text/xml; charset=utf-8');
+    
+    echo '<?xml version="1.0" encoding="UTF-8"?>';
+    echo '<films>';
+    
+    foreach ($films as $film) {
+        echo '<film>';
+        echo '<name>' . htmlspecialchars($film['name']) . '</name>';
+        echo '<date>' . htmlspecialchars($film['date']) . '</date>';
+        echo '<director>' . htmlspecialchars($film['director']) . '</director>';
+        echo '</film>';
+    }
+    
+    echo '</films>';
 }
 ?>
